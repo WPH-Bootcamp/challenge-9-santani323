@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@/app/assets/logo_read.svg";
+import logoRead from "@/app/assets/logo_read.svg";
+import logo from "@/app/assets/logo.svg";
+import logoText from "@/app/assets/logo_text.svg";
+import logoTextRead from "@/app/assets/logo_text_read.svg";
+import { Button } from "@/components/ui/Button";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -27,11 +31,18 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src={logo}
+              src={isScrolled ? logoRead : logo}
               alt="BurgerHub Logo"
               width={32}
               height={32}
-              className="w-8 h-8"
+              className="w-8 h-8 md:hidden"
+            />
+            <Image
+              src={isScrolled ? logoTextRead : logoText}
+              alt="BurgerHub"
+              width={120}
+              height={32}
+              className="h-8 w-auto hidden md:block"
             />
           </Link>
 
@@ -59,35 +70,31 @@ export default function Navigation() {
           </div> */}
 
           <div className="flex items-center gap-4">
-            <button
-              className={`relative p-2 transition-colors ${
-                isScrolled
-                  ? "text-gray-600 hover:text-red-600"
-                  : "text-white hover:text-red-200"
-              }`}
-            >
-              {/* <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                3
-              </span> */}
-            </button>
-            <Link
-              href="/login"
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
-                isScrolled
-                  ? "text-gray-700 hover:text-red-600"
-                  : "text-white hover:text-red-200"
-              }`}
-            >
-              Sign In
+            <Link href="/login">
+              <Button
+                variant="ghost"
+                size="md"
+                className={`border-2 bg-transparent px-6 ${
+                  isScrolled
+                    ? "border-black text-black hover:bg-gray-100"
+                    : "border-white text-white hover:bg-white/10"
+                }`}
+              >
+                Sign In
+              </Button>
             </Link>
-            <Link
-              href="/register"
-              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Sign Up
+            <Link href="/register">
+              <Button
+                variant="ghost"
+                size="md"
+                className={`px-6 ${
+                  isScrolled
+                    ? "bg-white text-black border-2 border-black hover:bg-gray-100"
+                    : "bg-white text-black hover:bg-gray-100"
+                }`}
+              >
+                Sign Up
+              </Button>
             </Link>
           </div>
         </div>
