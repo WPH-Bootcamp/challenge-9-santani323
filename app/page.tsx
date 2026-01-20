@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -72,34 +73,59 @@ const menuItems = [
 const categories = ['All', 'Burger', 'Sides', 'Drinks'];
 
 export default function HomePage() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
+      <nav className={`sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white shadow-sm' : 'bg-transparent'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-red-600 rounded-sm"></div>
-              <span className="text-xl font-bold">BurgerHub</span>
+              <span className={`text-xl font-bold transition-colors ${
+                isScrolled ? 'text-gray-900' : 'text-white'
+              }`}>BurgerHub</span>
             </div>
             
             <div className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-gray-900 hover:text-red-600 font-medium">
+              <Link href="/" className={`font-medium transition-colors ${
+                isScrolled ? 'text-gray-900 hover:text-red-600' : 'text-white hover:text-red-200'
+              }`}>
                 Home
               </Link>
-              <Link href="#menu" className="text-gray-600 hover:text-red-600">
+              <Link href="#menu" className={`transition-colors ${
+                isScrolled ? 'text-gray-600 hover:text-red-600' : 'text-white/90 hover:text-red-200'
+              }`}>
                 Menu
               </Link>
-              <Link href="#about" className="text-gray-600 hover:text-red-600">
+              <Link href="#about" className={`transition-colors ${
+                isScrolled ? 'text-gray-600 hover:text-red-600' : 'text-white/90 hover:text-red-200'
+              }`}>
                 About
               </Link>
-              <Link href="#contact" className="text-gray-600 hover:text-red-600">
+              <Link href="#contact" className={`transition-colors ${
+                isScrolled ? 'text-gray-600 hover:text-red-600' : 'text-white/90 hover:text-red-200'
+              }`}>
                 Contact
               </Link>
             </div>
 
             <div className="flex items-center gap-4">
-              <button className="relative p-2 text-gray-600 hover:text-red-600">
+              <button className={`relative p-2 transition-colors ${
+                isScrolled ? 'text-gray-600 hover:text-red-600' : 'text-white hover:text-red-200'
+              }`}>
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
@@ -109,7 +135,9 @@ export default function HomePage() {
               </button>
               <Link
                 href="/login"
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-red-600"
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  isScrolled ? 'text-gray-700 hover:text-red-600' : 'text-white hover:text-red-200'
+                }`}
               >
                 Sign In
               </Link>
@@ -125,33 +153,37 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative bg-linear-to-r from-red-600 to-red-700 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="relative h-screen text-white">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=1920&q=80"
+            alt="Hero Background"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/60"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 h-full flex items-center justify-center">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="space-y-6">
-              <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 Taste the Premium Quality
               </h1>
-              <p className="text-xl text-red-100">
+              <p className="text-xl md:text-2xl text-gray-200">
                 Handcrafted burgers made with the finest ingredients, delivered fresh to your door
               </p>
-              <div className="flex gap-4">
-                <button className="px-8 py-3 bg-white text-red-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors">
+              <div className="flex gap-4 justify-center">
+                <button className="px-8 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors">
                   Order Now
                 </button>
                 <button className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-red-600 transition-colors">
                   View Menu
                 </button>
               </div>
-            </div>
-            <div className="relative h-96 lg:h-125">
-              <Image
-                src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80"
-                alt="Premium Burger"
-                fill
-                className="object-contain"
-                priority
-              />
             </div>
           </div>
         </div>

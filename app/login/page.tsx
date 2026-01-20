@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -46,6 +47,7 @@ const validateField = (
 };
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -81,7 +83,8 @@ export default function LoginPage() {
     // If no errors, proceed with login
     if (!emailErr && !passwordErr) {
       console.log("Login:", { email, password });
-      // Handle login logic here
+      // Redirect to home page
+      router.push("/");
     }
   };
 
