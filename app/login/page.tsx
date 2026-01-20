@@ -1,58 +1,62 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Checkbox } from '@/components/ui/Checkbox';
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 
 // Validation Rules
 const validationRules = {
   email: [
     {
       validate: (value: string) => !!value,
-      message: 'Email is required'
+      message: "Email is required",
     },
     {
       validate: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-      message: 'Please enter a valid email address'
-    }
+      message: "Please enter a valid email address",
+    },
   ],
   password: [
     {
       validate: (value: string) => !!value,
-      message: 'Password is required'
+      message: "Password is required",
     },
     {
       validate: (value: string) => value.length >= 6,
-      message: 'Password must be at least 6 characters'
-    }
-  ]
+      message: "Password must be at least 6 characters",
+    },
+  ],
 };
 
 // Validate field based on rules
-const validateField = (fieldName: keyof typeof validationRules, value: string): string => {
+const validateField = (
+  fieldName: keyof typeof validationRules,
+  value: string,
+): string => {
   const rules = validationRules[fieldName];
   for (const rule of rules) {
     if (!rule.validate(value)) {
       return rule.message;
     }
   }
-  return '';
+  return "";
 };
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmail(value);
     if (emailError) {
-      setEmailError(validateField('email', value));
+      setEmailError(validateField("email", value));
     }
   };
 
@@ -60,23 +64,23 @@ export default function LoginPage() {
     const value = e.target.value;
     setPassword(value);
     if (passwordError) {
-      setPasswordError(validateField('password', value));
+      setPasswordError(validateField("password", value));
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate all fields
-    const emailErr = validateField('email', email);
-    const passwordErr = validateField('password', password);
-    
+    const emailErr = validateField("email", email);
+    const passwordErr = validateField("password", password);
+
     setEmailError(emailErr);
     setPasswordError(passwordErr);
-    
+
     // If no errors, proceed with login
     if (!emailErr && !passwordErr) {
-      console.log('Login:', { email, password });
+      console.log("Login:", { email, password });
       // Handle login logic here
     }
   };
@@ -109,8 +113,12 @@ export default function LoginPage() {
               />
               <span className="text-4xl font-bold text-gray-900">Foody</span>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">Welcome Back</h1>
-            <p className="text-lg text-gray-600">Good to see you again! Let's eat</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">
+              Welcome Back
+            </h1>
+            <p className="text-lg text-gray-600">
+              Good to see you again! Let's eat
+            </p>
           </div>
 
           {/* Tabs Navigation */}
@@ -118,7 +126,10 @@ export default function LoginPage() {
             <div className="flex-1 text-center py-3 px-6 bg-white font-semibold text-gray-900 rounded-lg shadow-sm">
               Sign in
             </div>
-            <Link href="/register" className="flex-1 text-center py-3 px-6 font-semibold text-gray-600 hover:text-gray-900 rounded-lg transition-colors">
+            <Link
+              href="/register"
+              className="flex-1 text-center py-3 px-6 font-semibold text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
+            >
               Sign up
             </Link>
           </div>
@@ -158,26 +169,17 @@ export default function LoginPage() {
                 id="remember-me"
                 name="remember-me"
                 label="Remember me"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
               />
-
-              
             </div>
 
             <div>
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                fullWidth
-              >
+              <Button type="submit" variant="primary" size="lg" fullWidth>
                 Sign in
               </Button>
             </div>
-
-          
           </form>
-
-         
         </div>
       </div>
     </div>
