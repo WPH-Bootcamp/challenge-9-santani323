@@ -7,14 +7,78 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
 
+// Validation Rules
+const validationRules = {
+  email: [
+    {
+      validate: (value: string) => !!value,
+      message: 'Email is required'
+    },
+    {
+      validate: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+      message: 'Please enter a valid email address'
+    }
+  ],
+  password: [
+    {
+      validate: (value: string) => !!value,
+      message: 'Password is required'
+    },
+    {
+      validate: (value: string) => value.length >= 6,
+      message: 'Password must be at least 6 characters'
+    }
+  ]
+};
+
+// Validate field based on rules
+const validateField = (fieldName: keyof typeof validationRules, value: string): string => {
+  const rules = validationRules[fieldName];
+  for (const rule of rules) {
+    if (!rule.validate(value)) {
+      return rule.message;
+    }
+  }
+  return '';
+};
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    if (emailError) {
+      setEmailError(validateField('email', value));
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (passwordError) {
+      setPasswordError(validateField('password', value));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login:', { email, password });
-    // Handle login logic here
+    
+    // Validate all fields
+    const emailErr = validateField('email', email);
+    const passwordErr = validateField('password', password);
+    
+    setEmailError(emailErr);
+    setPasswordError(passwordErr);
+    
+    // If no errors, proceed with login
+    if (!emailErr && !passwordErr) {
+      console.log('Login:', { email, password });
+      // Handle login logic here
+    }
   };
 
   return (
@@ -58,11 +122,11 @@ export default function LoginPage() {
                 type="email"
                 label="Email Address"
                 autoComplete="email"
-                required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 placeholder="Enter your email"
                 fullWidth
+                error={emailError}
               />
 
               <Input
@@ -71,11 +135,11 @@ export default function LoginPage() {
                 type="password"
                 label="Password"
                 autoComplete="current-password"
-                required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
                 placeholder="Enter your password"
                 fullWidth
+                error={passwordError}
               />
             </div>
 
