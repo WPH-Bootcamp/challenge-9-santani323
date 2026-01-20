@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import Image from 'next/image';
+import logo from '@/app/assets/logo_read.svg';
 
 export default function Footer() {
   return (
@@ -7,8 +9,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-red-600 rounded-sm"></div>
-              <span className="text-xl font-bold">BurgerHub</span>
+              <Image src={logo} alt="BurgerHub Logo" width={32} height={32} className="w-8 h-8" />
+             
             </div>
             <p className="text-gray-400">
               Serving the best burgers in town since 2020
