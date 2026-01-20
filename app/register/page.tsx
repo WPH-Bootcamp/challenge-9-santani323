@@ -32,20 +32,30 @@ export default function RegisterPage() {
       {/* Right Side - Register Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="max-w-md w-full space-y-8">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-red-600 rounded-sm"></div>
-            <span className="text-xl font-bold">BurgerHub</span>
+          {/* Logo and Branding */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <Image
+                src="/logo_read.svg"
+                alt="Foody Logo"
+                width={48}
+                height={48}
+                className="w-12 h-12"
+              />
+              <span className="text-4xl font-bold text-gray-900">Foody</span>
+            </div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">Welcome Back</h1>
+            <p className="text-lg text-gray-600">Good to see you again! Let's eat</p>
           </div>
 
-          {/* Header */}
-          <div className="mt-8">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Create Account
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Join us and start ordering delicious food
-            </p>
+          {/* Tabs Navigation */}
+          <div className="flex gap-3 mb-8 bg-gray-100 p-2 rounded-xl">
+            <Link href="/login" className="flex-1 text-center py-3 px-6 font-semibold text-gray-600 hover:text-gray-900 rounded-lg transition-colors">
+              Sign in
+            </Link>
+            <div className="flex-1 text-center py-3 px-6 bg-white font-semibold text-gray-900 rounded-lg shadow-sm">
+              Sign up
+            </div>
           </div>
 
           {/* Form */}
