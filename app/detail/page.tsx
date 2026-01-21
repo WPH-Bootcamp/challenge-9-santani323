@@ -1,13 +1,11 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import HeroGallery from "@/components/detail/HeroGallery";
 import RestaurantInfo from "@/components/detail/RestaurantInfo";
+import MenuSection from "@/components/detail/MenuSection";
+import ReviewSection from "@/components/detail/ReviewSection";
 
 const images = [
   "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80",
@@ -17,50 +15,133 @@ const images = [
 ];
 
 const menuItems = [
-  { id: 1, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" },
-  { id: 2, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&q=80" },
-  { id: 3, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80" },
-  { id: 4, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80" },
-  { id: 5, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&q=80" },
-  { id: 6, name: "Food Name", price: 50000, category: "drink", image: "https://images.unsplash.com/photo-1546173159-315724a31696?w=400&q=80" },
-  { id: 7, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400&q=80" },
-  { id: 8, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1513185158878-8d8c2a2a3da3?w=400&q=80" },
+  {
+    id: 1,
+    name: "Food Name",
+    price: 50000,
+    category: "food",
+    image:
+      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80",
+  },
+  {
+    id: 2,
+    name: "Food Name",
+    price: 50000,
+    category: "food",
+    image:
+      "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&q=80",
+  },
+  {
+    id: 3,
+    name: "Food Name",
+    price: 50000,
+    category: "food",
+    image:
+      "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80",
+  },
+  {
+    id: 4,
+    name: "Food Name",
+    price: 50000,
+    category: "food",
+    image:
+      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80",
+  },
+  {
+    id: 5,
+    name: "Food Name",
+    price: 50000,
+    category: "food",
+    image:
+      "https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&q=80",
+  },
+  {
+    id: 6,
+    name: "Drink Name",
+    price: 30000,
+    category: "drink",
+    image:
+      "https://images.unsplash.com/photo-1546173159-315724a31696?w=400&q=80",
+  },
+  {
+    id: 7,
+    name: "Food Name",
+    price: 50000,
+    category: "food",
+    image:
+      "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400&q=80",
+  },
+  {
+    id: 8,
+    name: "Food Name",
+    price: 50000,
+    category: "food",
+    image:
+      "https://images.unsplash.com/photo-1513185158878-8d8c2a2a3da3?w=400&q=80",
+  },
+];
+
+const reviews = [
+  {
+    id: 1,
+    name: "Sanrio Avelino",
+    date: "2 hari lalu",
+    rating: 5,
+    comment: "Burger yang sangat lezat! Dagingnya juicy dan bumbunya pas banget. Pelayanannya juga cepat dan ramah. Recommended!",
+    avatar: "SA"
+  },
+  {
+    id: 2,
+    name: "Budi Santoso",
+    date: "3 hari lalu",
+    rating: 5,
+    comment: "Whopper favorit saya! Selalu fresh dan porsinya besar. Tempatnya juga bersih dan nyaman.",
+    avatar: "BS"
+  },
+  {
+    id: 3,
+    name: "Maya Putri",
+    date: "5 hari lalu",
+    rating: 5,
+    comment: "Menu chicken burgernya enak banget, kentangnya crispy. Harga terjangkau dengan kualitas premium!",
+    avatar: "MP"
+  },
+  {
+    id: 4,
+    name: "Rudi Hermawan",
+    date: "1 minggu lalu",
+    rating: 5,
+    comment: "Suka banget sama burger king! Rasanya konsisten dan selalu memuaskan. Minumannya juga enak.",
+    avatar: "RH"
+  },
+  {
+    id: 5,
+    name: "Siti Nurhaliza",
+    date: "1 minggu lalu",
+    rating: 5,
+    comment: "Pelayanan sangat memuaskan, makanannya enak, tempatnya bersih. Worth it banget!",
+    avatar: "SN"
+  },
+  {
+    id: 6,
+    name: "Ahmad Fauzi",
+    date: "2 minggu lalu",
+    rating: 5,
+    comment: "Double beef burgernya mantap! Daging tebal dan sausnya creamy. Pasti balik lagi!",
+    avatar: "AF"
+  },
 ];
 
 export default function DetailPage() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [quantities, setQuantities] = useState<Record<number, number>>({});
-
-  const filteredItems = selectedCategory === "all" 
-    ? menuItems 
-    : menuItems.filter(item => item.category === selectedCategory);
-
-  const handleAdd = (id: number) => {
-    setQuantities(prev => ({ ...prev, [id]: 1 }));
-  };
-
-  const handleIncrease = (id: number) => {
-    setQuantities(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
-  };
-
-  const handleDecrease = (id: number) => {
-    setQuantities(prev => {
-      const newQty = (prev[id] || 0) - 1;
-      if (newQty <= 0) {
-        const { [id]: _, ...rest } = prev;
-        return rest;
-      }
-      return { ...prev, [id]: newQty };
-    });
-  };
-
   return (
     <div className="min-h-screen bg-white">
       <Navigation scrolled />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 xl:px-24 py-8 mt-16">
+        {/* ================= HERO ================= */}
         <HeroGallery images={images} />
-        
+
+        {/* ================= RESTAURANT INFO ================= */}
         <RestaurantInfo
           name="Burger King"
           logo="/Burger.svg"
@@ -70,122 +151,17 @@ export default function DetailPage() {
         />
 
         {/* ================= MENU ================= */}
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold mb-6">Menu</h2>
-
-          {/* Category Tabs */}
-          <div className="flex gap-3 mb-6">
-            <button
-              onClick={() => setSelectedCategory("all")}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
-                selectedCategory === "all"
-                  ? "bg-red-600 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-              }`}
-            >
-              All Menu
-            </button>
-            <button
-              onClick={() => setSelectedCategory("food")}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
-                selectedCategory === "food"
-                  ? "bg-red-600 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-              }`}
-            >
-              Food
-            </button>
-            <button
-              onClick={() => setSelectedCategory("drink")}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
-                selectedCategory === "drink"
-                  ? "bg-red-600 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-              }`}
-            >
-              Drink
-            </button>
-          </div>
-
-          {/* Menu Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredItems.map((item) => (
-              <div key={item.id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden">
-                <div className="relative w-full aspect-[4/3]">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-3">
-                  <div className="flex items-end justify-between gap-2">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-1">{item.name}</h3>
-                      <p className="text-lg font-bold text-gray-900">
-                        Rp{item.price.toLocaleString("id-ID")}
-                      </p>
-                    </div>
-                    
-                    <div className="flex-shrink-0">
-                      {quantities[item.id] ? (
-                        <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
-                          <button
-                            onClick={() => handleDecrease(item.id)}
-                            className="w-7 h-7 flex items-center justify-center bg-white rounded hover:bg-gray-200 transition-colors"
-                          >
-                            <span className="text-lg font-bold text-gray-700">−</span>
-                          </button>
-                          <span className="font-bold text-gray-900 min-w-[20px] text-center">{quantities[item.id]}</span>
-                          <button
-                            onClick={() => handleIncrease(item.id)}
-                            className="w-7 h-7 flex items-center justify-center bg-red-600 rounded hover:bg-red-700 transition-colors"
-                          >
-                            <span className="text-lg font-bold text-white">+</span>
-                          </button>
-                        </div>
-                      ) : (
-                        <Button
-                          onClick={() => handleAdd(item.id)}
-                          variant="primary"
-                          size="sm"
-                          className="px-6"
-                        >
-                          Add
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Show More Button */}
-          <div className="flex justify-center mt-8">
-            <button className="px-8 py-3 border border-gray-300 rounded-full text-gray-700 font-medium hover:bg-gray-50 transition-colors">
-              Show More
-            </button>
-          </div>
+        <section className="mt-10">
+          <MenuSection menuItems={menuItems} />
         </section>
 
         {/* ================= REVIEWS ================= */}
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
-
-          <div className="space-y-4">
-            {[
-              { id: 1, name: "John Doe", comment: "Amazing burgers!" },
-              { id: 2, name: "Jane Smith", comment: "Great service & taste." },
-              { id: 3, name: "Mike Johnson", comment: "Whopper is the best!" },
-            ].map((review) => (
-              <Card key={review.id} className="p-4">
-                <strong className="block">{review.name}</strong>
-                <p className="text-sm text-gray-600">{review.comment}</p>
-              </Card>
-            ))}
-          </div>
+        <section className="mt-14">
+          <ReviewSection 
+            reviews={reviews}
+            averageRating={4.9}
+            totalReviews={24}
+          />
         </section>
       </main>
 
