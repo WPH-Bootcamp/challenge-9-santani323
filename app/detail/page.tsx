@@ -111,7 +111,7 @@ export default function DetailPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredItems.map((item) => (
               <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative w-full h-40 bg-gray-900">
+                <div className="relative w-full h-48 bg-gray-900">
                   <Image
                     src={item.image}
                     alt={item.name}
@@ -119,41 +119,43 @@ export default function DetailPage() {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-4 flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-900 mb-1 truncate">{item.name}</h3>
-                    <p className="text-sm font-semibold text-gray-900">
-                      Rp{item.price.toLocaleString("id-ID")}
-                    </p>
-                  </div>
-                  
-                  <div className="flex-shrink-0">
-                    {quantities[item.id] ? (
-                      <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
-                        <button
-                          onClick={() => handleDecrease(item.id)}
-                          className="w-7 h-7 flex items-center justify-center bg-white rounded hover:bg-gray-200 transition-colors"
+                <div className="p-4">
+                  <div className="flex items-end justify-between gap-2">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 mb-1">{item.name}</h3>
+                      <p className="text-lg font-bold text-gray-900">
+                        Rp{item.price.toLocaleString("id-ID")}
+                      </p>
+                    </div>
+                    
+                    <div className="flex-shrink-0">
+                      {quantities[item.id] ? (
+                        <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                          <button
+                            onClick={() => handleDecrease(item.id)}
+                            className="w-7 h-7 flex items-center justify-center bg-white rounded hover:bg-gray-200 transition-colors"
+                          >
+                            <span className="text-lg font-bold text-gray-700">−</span>
+                          </button>
+                          <span className="font-bold text-gray-900 min-w-[20px] text-center">{quantities[item.id]}</span>
+                          <button
+                            onClick={() => handleIncrease(item.id)}
+                            className="w-7 h-7 flex items-center justify-center bg-red-600 rounded hover:bg-red-700 transition-colors"
+                          >
+                            <span className="text-lg font-bold text-white">+</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={() => handleAdd(item.id)}
+                          variant="primary"
+                          size="sm"
+                          className="px-6"
                         >
-                          <span className="text-lg font-bold text-gray-700">−</span>
-                        </button>
-                        <span className="font-bold text-gray-900 min-w-[20px] text-center">{quantities[item.id]}</span>
-                        <button
-                          onClick={() => handleIncrease(item.id)}
-                          className="w-7 h-7 flex items-center justify-center bg-red-600 rounded hover:bg-red-700 transition-colors"
-                        >
-                          <span className="text-lg font-bold text-white">+</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <Button
-                        onClick={() => handleAdd(item.id)}
-                        variant="primary"
-                        size="sm"
-                        className="px-4"
-                      >
-                        Add
-                      </Button>
-                    )}
+                          Add
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </Card>
