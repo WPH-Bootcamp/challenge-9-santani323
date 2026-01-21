@@ -1,19 +1,64 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import {
+  registerUser,
+  resetError,
+  resetRegistration,
+} from "@/lib/redux/features/authSlice";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { isLoading, error, isRegistered } = useAppSelector(
+    (state) => state.auth,
+  );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [validationError, setValidationError] = useState("");
+
+  useEffect(() => {
+    if (isRegistered) {
+      // Show success message
+      alert("Registrasi berhasil! Silakan login.");
+      dispatch(resetRegistration());
+      router.push("/login");
+    }
+  }, [isRegistered, dispatch, router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Register:', { fullName, email, password, confirmPassword });
-    // Handle registration logic here
+    setValidationError("");
+    dispatch(resetError());
+
+    // Validation
+    if (password !== confirmPassword) {
+      setValidationError("Password tidak cocok");
+      return;
+    }
+
+    if (password.length < 6) {
+      setValidationError("Password minimal 6 karakter");
+      return;
+    }
+
+    // Dispatch register action
+    dispatch(
+      registerUser({
+        name: "John Doe",
+        email: "1ttt99@example.com",
+        phone: "081234567895",
+        password: "password123",
+      }),
+    );
+    // dispatch(registerUser({ fullName, email, password }));
   };
 
   return (
@@ -44,13 +89,20 @@ export default function RegisterPage() {
               />
               <span className="text-4xl font-bold text-gray-900">Foody</span>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">Welcome Back</h1>
-            <p className="text-lg text-gray-600">Good to see you again! Let's eat</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">
+              Welcome Back
+            </h1>
+            <p className="text-lg text-gray-600">
+              Good to see you again! Let's eat
+            </p>
           </div>
 
           {/* Tabs Navigation */}
           <div className="flex gap-3 mb-8 bg-gray-100 p-2 rounded-xl">
-            <Link href="/login" className="flex-1 text-center py-3 px-6 font-semibold text-gray-600 hover:text-gray-900 rounded-lg transition-colors">
+            <Link
+              href="/login"
+              className="flex-1 text-center py-3 px-6 font-semibold text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
+            >
               Sign in
             </Link>
             <div className="flex-1 text-center py-3 px-6 bg-white font-semibold text-gray-900 rounded-lg shadow-sm">
@@ -60,9 +112,19 @@ export default function RegisterPage() {
 
           {/* Form */}
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            {/* Error Messages */}
+            {(error || validationError) && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                {error || validationError}
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
-                <label htmlFor="fullname" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="fullname"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Full Name
                 </label>
                 <input
@@ -79,7 +141,10 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Email Address
                 </label>
                 <input
@@ -96,7 +161,10 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Password
                 </label>
                 <input
@@ -113,7 +181,10 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="confirm-password"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Confirm Password
                 </label>
                 <input
@@ -130,21 +201,16 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            
-
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                disabled={isLoading}
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                Create Account
+                {isLoading ? "Creating Account..." : "Create Account"}
               </button>
             </div>
-
-           
           </form>
-
-         
         </div>
       </div>
     </div>
