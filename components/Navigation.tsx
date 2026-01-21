@@ -3,10 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import logoRead from "@/app/assets/logo_read.svg";
-import logo from "@/app/assets/logo.svg";
-import logoText from "@/app/assets/logo_text.svg";
-import logoTextRead from "@/app/assets/logo_text_read.svg";
 import { Button } from "@/components/ui/Button";
 
 export default function Navigation() {
@@ -31,14 +27,14 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src={isScrolled ? logoRead : logo}
+              src={isScrolled ? "/logo_read.svg" : "/logo.svg"}
               alt="BurgerHub Logo"
               width={32}
               height={32}
               className="w-8 h-8 md:hidden"
             />
             <Image
-              src={isScrolled ? logoTextRead : logoText}
+              src={isScrolled ? "/logo_text_read.svg" : "/logo_text.svg"}
               alt="BurgerHub"
               width={120}
               height={32}

@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from '@/app/assets/logo_read.svg';
 
 export default function Footer() {
   return (
@@ -9,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Image src={logo} alt="BurgerHub Logo" width={32} height={32} className="w-8 h-8" />
+              <Image src="/logo_read.svg" alt="BurgerHub Logo" width={32} height={32} className="w-8 h-8" />
              
             </div>
             <p className="text-gray-400">

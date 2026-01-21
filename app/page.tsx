@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import HeroSection from '@/components/HeroSection';
 
 const menuItems = [
   {
@@ -76,43 +77,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
-
-      {/* Hero Section */}
-      <section className="relative h-screen text-white">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=1920&q=80"
-            alt="Hero Background"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/60"></div>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 h-full flex items-center justify-center">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="space-y-6">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                Taste the Premium Quality
-              </h1>
-              <p className="text-xl md:text-2xl text-gray-200">
-                Handcrafted burgers made with the finest ingredients, delivered fresh to your door
-              </p>
-              <div className="flex gap-4 justify-center">
-                <button className="px-8 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors">
-                  Order Now
-                </button>
-                <button className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-red-600 transition-colors">
-                  View Menu
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* Features */}
       <section className="py-16 bg-white">
