@@ -110,8 +110,8 @@ export default function DetailPage() {
           {/* Menu Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredItems.map((item) => (
-              <div key={item.id} className="hover:shadow-lg transition-shadow">
-                <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden">
+              <div key={item.id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+                <div className="relative w-full aspect-[4/3]">
                   <Image
                     src={item.image}
                     alt={item.name}
