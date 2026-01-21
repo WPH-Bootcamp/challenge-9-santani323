@@ -1,173 +1,132 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import HeroSection from '@/components/HeroSection';
+import Image from "next/image";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import HeroSection from "@/components/HeroSection";
+import { Card } from "@/components/ui/Card";
 
-const menuItems = [
-  {
-    id: 1,
-    name: 'Classic Burger',
-    price: 45000,
-    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80',
-    category: 'Burger',
-  },
-  {
-    id: 2,
-    name: 'Cheese Burger',
-    price: 50000,
-    image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&q=80',
-    category: 'Burger',
-  },
-  {
-    id: 3,
-    name: 'Chicken Burger',
-    price: 48000,
-    image: 'https://images.unsplash.com/photo-1513185158878-8d8c2a2a3da3?w=400&q=80',
-    category: 'Burger',
-  },
-  {
-    id: 4,
-    name: 'Crispy Fries',
-    price: 25000,
-    image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80',
-    category: 'Sides',
-  },
-  {
-    id: 5,
-    name: 'Spicy Wings',
-    price: 35000,
-    image: 'https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400&q=80',
-    category: 'Sides',
-  },
-  {
-    id: 6,
-    name: 'Onion Rings',
-    price: 28000,
-    image: 'https://images.unsplash.com/photo-1639024471283-03518883512d?w=400&q=80',
-    category: 'Sides',
-  },
-  {
-    id: 7,
-    name: 'Coca Cola',
-    price: 15000,
-    image: 'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=400&q=80',
-    category: 'Drinks',
-  },
-  {
-    id: 8,
-    name: 'Lemonade',
-    price: 18000,
-    image: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&q=80',
-    category: 'Drinks',
-  },
-  {
-    id: 9,
-    name: 'Milkshake',
-    price: 30000,
-    image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80',
-    category: 'Drinks',
-  },
+const recommendedItems = Array.from({ length: 12 }, (_, i) => ({
+  id: i + 1,
+  name: "Burger King",
+  rating: 4.9,
+  location: "Jakarta Selatan",
+  distance: "2.4 km",
+  image: "/Burger.svg",
+}));
+
+const features = [
+  { id: 1, title: "All Restaurant", image: "/AllFood.svg" },
+  { id: 2, title: "Nearby", image: "/Location.svg" },
+  { id: 3, title: "Discount", image: "/Discount.svg" },
+  { id: 4, title: "Best Seller", image: "/BestSeller.svg" },
+  { id: 5, title: "Delivery", image: "/Delivery.svg" },
+  { id: 6, title: "Lunch", image: "/Lunch.svg" },
 ];
-
-const categories = ['All', 'Burger', 'Sides', 'Drinks'];
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Navigation />
-      <HeroSection />
 
-      {/* Features */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold">Fast Delivery</h3>
-              <p className="text-gray-600">Get your order in 30 minutes or less</p>
-            </div>
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold">Fresh Ingredients</h3>
-              <p className="text-gray-600">Only the finest and freshest ingredients</p>
-            </div>
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold">Quality Guaranteed</h3>
-              <p className="text-gray-600">100% satisfaction or money back</p>
+      <main className="max-w-7xl mx-auto">
+        <HeroSection />
+
+        {/* FEATURES */}
+        <section className="py-16 bg-white">
+          <div className="px-4 sm:px-6 lg:px-16 xl:px-24">
+            <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-8">
+              {features.map((feature) => (
+                <div key={feature.id} className="text-center space-y-3">
+                  <Card
+                    variant="elevated"
+                    hover
+                    className="p-4 lg:p-8 transition-transform hover:scale-105"
+                  >
+                    <div className="flex justify-center">
+                      <Image
+                        src={feature.image}
+                        alt={feature.title}
+                        width={64}
+                        height={64}
+                        className="w-12 h-12 lg:w-16 lg:h-16 object-contain"
+                      />
+                    </div>
+                  </Card>
+                  <h3 className="text-xs lg:text-lg font-bold text-gray-900">
+                    {feature.title}
+                  </h3>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Menu Section */}
-      <section id="menu" className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Menu</h2>
-            <p className="text-xl text-gray-600">Discover our delicious selection</p>
-          </div>
-
-          {/* Category Filter */}
-          <div className="flex justify-center gap-4 mb-12 flex-wrap">
-            {categories.map((category) => (
-              <button
-                key={category}
-                className="px-6 py-2 rounded-full font-medium transition-colors hover:bg-red-600 hover:text-white bg-white text-gray-700 border border-gray-300"
-              >
-                {category}
+        {/* RECOMMENDED */}
+        <section id="recommended" className="py-16 bg-white">
+          <div className="px-4 sm:px-6 lg:px-16 xl:px-24">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                Recommended
+              </h2>
+              <button className="text-red-600 hover:text-red-700 font-medium">
+                See All
               </button>
-            ))}
-          </div>
+            </div>
 
-          {/* Menu Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {menuItems.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow"
-              >
-                <div className="relative h-48">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    {item.category}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recommendedItems.map((item) => (
+                <Card
+                  key={item.id}
+                  variant="default"
+                  hover
+                  className="p-4 transition-shadow hover:shadow-lg"
+                >
+                  <div className="flex gap-4">
+                    <div className="bg-orange-100 rounded-2xl p-3 w-16 h-16 flex items-center justify-center">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        width={48}
+                        height={48}
+                        className="object-contain"
+                      />
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-gray-900">
+                        {item.name}
+                      </h3>
+
+                      <div className="flex items-center gap-1 text-sm">
+                        <svg
+                          className="w-4 h-4 text-yellow-400 fill-current"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                        </svg>
+                        <span className="font-medium text-gray-700">
+                          {item.rating}
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-gray-500">
+                        {item.location} · {item.distance}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{item.name}</h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-red-600">
-                      Rp {item.price.toLocaleString('id-ID')}
-                    </span>
-                    <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+                </Card>
+              ))}
+            </div>
+
+            <div className="flex justify-center mt-10">
+              <button className="px-8 py-3 border rounded-full text-gray-700 hover:bg-gray-100 transition">
+                Show More
+              </button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       <Footer />
     </div>
