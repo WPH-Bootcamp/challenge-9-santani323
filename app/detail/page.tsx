@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import HeroGallery from "@/components/detail/HeroGallery";
+import RestaurantInfo from "@/components/detail/RestaurantInfo";
 
 const images = [
   "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80",
@@ -14,170 +16,151 @@ const images = [
   "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=800&q=80",
 ];
 
+const menuItems = [
+  { id: 1, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" },
+  { id: 2, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&q=80" },
+  { id: 3, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80" },
+  { id: 4, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80" },
+  { id: 5, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&q=80" },
+  { id: 6, name: "Food Name", price: 50000, category: "drink", image: "https://images.unsplash.com/photo-1546173159-315724a31696?w=400&q=80" },
+  { id: 7, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400&q=80" },
+  { id: 8, name: "Food Name", price: 50000, category: "food", image: "https://images.unsplash.com/photo-1513185158878-8d8c2a2a3da3?w=400&q=80" },
+];
+
 export default function DetailPage() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [quantities, setQuantities] = useState<Record<number, number>>({});
 
-  // Auto slide
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % images.length);
-    }, 3000);
+  const filteredItems = selectedCategory === "all" 
+    ? menuItems 
+    : menuItems.filter(item => item.category === selectedCategory);
 
-    return () => clearInterval(timer);
-  }, []);
+  const handleAdd = (id: number) => {
+    setQuantities(prev => ({ ...prev, [id]: 1 }));
+  };
+
+  const handleIncrease = (id: number) => {
+    setQuantities(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  };
+
+  const handleDecrease = (id: number) => {
+    setQuantities(prev => {
+      const newQty = (prev[id] || 0) - 1;
+      if (newQty <= 0) {
+        const { [id]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [id]: newQty };
+    });
+  };
 
   return (
     <div className="min-h-screen bg-white">
       <Navigation scrolled />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 xl:px-24 py-8 mt-16">
-        {/* ================= HERO / GALLERY ================= */}
-        <section className="mb-8">
-          {/* Desktop */}
-          <div className="hidden lg:grid grid-cols-2 gap-4">
-            <div className="relative h-96 rounded-2xl overflow-hidden">
-              <Image
-                src={images[0]}
-                alt="Main Image"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              {images.slice(1).map((img, i) => (
-                <div
-                  key={i}
-                  className={`relative rounded-2xl overflow-hidden ${
-                    i === 2 ? "col-span-2 h-44" : "h-44"
-                  }`}
-                >
-                  <Image
-                    src={img}
-                    alt={`Gallery ${i + 2}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile Slider (NO ARROWS) */}
-          <div className="lg:hidden">
-            {/* Image */}
-            <div className="relative h-64 rounded-2xl overflow-hidden">
-              {images.map((img, index) => (
-                <div
-                  key={index}
-                  className={`absolute inset-0 transition-opacity duration-500 ${
-                    index === currentSlide ? "opacity-100" : "opacity-0"
-                  }`}
-                >
-                  <Image
-                    src={img}
-                    alt={`Slide ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Dots BELOW IMAGE */}
-            <div className="flex justify-center gap-2 mt-4">
-              {images.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    index === currentSlide
-                      ? "bg-red-600 w-6"
-                      : "bg-gray-300 w-2 hover:bg-gray-400"
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ================= RESTAURANT INFO ================= */}
-        <section className="bg-white rounded-xl shadow p-6 lg:p-8 mb-8">
-          <div className="flex gap-4 items-start justify-between">
-            <div className="flex gap-4">
-              <div className="bg-orange-100 w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0">
-                <Image src="/Burger.svg" alt="Logo" width={40} height={40} />
-              </div>
-
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Burger King</h1>
-                <p className="text-sm text-gray-600">Jakarta Selatan · 2.4 km</p>
-
-                <div className="flex items-center gap-1 mt-1">
-                  <span className="text-yellow-400">★</span>
-                  <span className="font-semibold">4.9</span>
-                </div>
-
-                <p className="mt-3 text-gray-600">
-                  Burger King terkenal dengan flame-grilled burger dan menu
-                  andalannya seperti Whopper.
-                </p>
-              </div>
-            </div>
-
-            {/* Share Button */}
-            <Button 
-              variant="outline" 
-              size="md"
-              leftIcon={
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-              }
-            >
-              Share
-            </Button>
-          </div>
-        </section>
+        <HeroGallery images={images} />
+        
+        <RestaurantInfo
+          name="Burger King"
+          logo="/Burger.svg"
+          rating={4.9}
+          location="Jakarta Selatan"
+          distance="2.4 km"
+        />
 
         {/* ================= MENU ================= */}
         <section className="mb-8">
-          <h2 className="text-2xl font-bold mb-6">Popular Menu</h2>
+          <h2 className="text-2xl font-bold mb-6">Menu</h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { id: 1, name: "Whopper", price: 45000 },
-              { id: 2, name: "Cheese Burger", price: 38000 },
-              { id: 3, name: "Chicken Burger", price: 40000 },
-              { id: 4, name: "Double Whopper", price: 55000 },
-              { id: 5, name: "Fish Burger", price: 39000 },
-              { id: 6, name: "Crispy Chicken", price: 42000 },
-            ].map((item) => (
-              <Card key={item.id} className="p-4 hover:shadow-lg">
-                <div className="flex gap-4">
-                  <div className="bg-orange-100 w-20 h-20 rounded-xl flex items-center justify-center">
-                    <Image
-                      src="/Burger.svg"
-                      alt={item.name}
-                      width={50}
-                      height={50}
-                    />
-                  </div>
+          {/* Category Tabs */}
+          <div className="flex gap-3 mb-6">
+            <button
+              onClick={() => setSelectedCategory("all")}
+              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+                selectedCategory === "all"
+                  ? "bg-red-600 text-white"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              All Menu
+            </button>
+            <button
+              onClick={() => setSelectedCategory("food")}
+              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+                selectedCategory === "food"
+                  ? "bg-red-600 text-white"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              Food
+            </button>
+            <button
+              onClick={() => setSelectedCategory("drink")}
+              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+                selectedCategory === "drink"
+                  ? "bg-red-600 text-white"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              Drink
+            </button>
+          </div>
 
-                  <div>
-                    <h3 className="font-bold text-gray-900">{item.name}</h3>
-                    <p className="text-red-600 font-bold">
-                      Rp {item.price.toLocaleString("id-ID")}
-                    </p>
-                    <button className="mt-2 px-4 py-1.5 bg-red-600 text-white rounded hover:bg-red-700">
-                      Add to Cart
-                    </button>
-                  </div>
+          {/* Menu Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredItems.map((item) => (
+              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="relative h-40 bg-gray-900">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold text-gray-900 mb-1">{item.name}</h3>
+                  <p className="text-sm font-semibold text-gray-900 mb-3">
+                    Rp{item.price.toLocaleString("id-ID")}
+                  </p>
+                  
+                  {quantities[item.id] ? (
+                    <div className="flex items-center justify-between bg-gray-100 rounded-lg p-1">
+                      <button
+                        onClick={() => handleDecrease(item.id)}
+                        className="w-8 h-8 flex items-center justify-center bg-white rounded-lg hover:bg-gray-200 transition-colors"
+                      >
+                        <span className="text-xl font-bold text-gray-700">−</span>
+                      </button>
+                      <span className="font-bold text-gray-900">{quantities[item.id]}</span>
+                      <button
+                        onClick={() => handleIncrease(item.id)}
+                        className="w-8 h-8 flex items-center justify-center bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        <span className="text-xl font-bold text-white">+</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={() => handleAdd(item.id)}
+                      variant="primary"
+                      size="sm"
+                      className="w-full"
+                    >
+                      Add
+                    </Button>
+                  )}
                 </div>
               </Card>
             ))}
+          </div>
+
+          {/* Show More Button */}
+          <div className="flex justify-center mt-8">
+            <button className="px-8 py-3 border border-gray-300 rounded-full text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+              Show More
+            </button>
           </div>
         </section>
 
