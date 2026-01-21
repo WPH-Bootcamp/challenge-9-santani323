@@ -110,8 +110,8 @@ export default function DetailPage() {
           {/* Menu Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredItems.map((item) => (
-              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative w-full h-48 bg-gray-900">
+              <div key={item.id} className="hover:shadow-lg transition-shadow">
+                <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden">
                   <Image
                     src={item.image}
                     alt={item.name}
@@ -119,7 +119,7 @@ export default function DetailPage() {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-4">
+                <div className="p-3">
                   <div className="flex items-end justify-between gap-2">
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900 mb-1">{item.name}</h3>
@@ -158,7 +158,7 @@ export default function DetailPage() {
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
 
