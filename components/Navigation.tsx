@@ -5,12 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 
-export default function Navigation() {
-  const [isScrolled, setIsScrolled] = useState(false);
+export default function Navigation({ scrolled = false }) {
+  const [isScrolled, setIsScrolled] = useState(scrolled);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
+      setIsScrolled(scrolled ? true : window.scrollY > 0);
     };
 
     window.addEventListener("scroll", handleScroll);

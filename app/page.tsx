@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
@@ -76,46 +77,47 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {recommendedItems.map((item) => (
-                <Card
-                  key={item.id}
-                  variant="default"
-                  hover
-                  className="p-4 transition-shadow hover:shadow-lg"
-                >
-                  <div className="flex gap-4">
-                    <div className="bg-orange-100 rounded-2xl p-3 w-16 h-16 flex items-center justify-center">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        width={48}
-                        height={48}
-                        className="object-contain"
-                      />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-gray-900">
-                        {item.name}
-                      </h3>
-
-                      <div className="flex items-center gap-1 text-sm">
-                        <svg
-                          className="w-4 h-4 text-yellow-400 fill-current"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                        </svg>
-                        <span className="font-medium text-gray-700">
-                          {item.rating}
-                        </span>
+                <Link key={item.id} href="/detail">
+                  <Card
+                    variant="default"
+                    hover
+                    className="p-4 transition-shadow hover:shadow-lg cursor-pointer"
+                  >
+                    <div className="flex gap-4">
+                      <div className="bg-orange-100 rounded-2xl p-3 w-16 h-16 flex items-center justify-center">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          width={48}
+                          height={48}
+                          className="object-contain"
+                        />
                       </div>
 
-                      <p className="text-xs text-gray-500">
-                        {item.location} · {item.distance}
-                      </p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-gray-900">
+                          {item.name}
+                        </h3>
+
+                        <div className="flex items-center gap-1 text-sm">
+                          <svg
+                            className="w-4 h-4 text-yellow-400 fill-current"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                          </svg>
+                          <span className="font-medium text-gray-700">
+                            {item.rating}
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-gray-500">
+                          {item.location} · {item.distance}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Card>
+                  </Card>
+                </Link>
               ))}
             </div>
 
