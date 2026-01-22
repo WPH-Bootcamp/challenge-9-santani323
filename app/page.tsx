@@ -2,19 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
+
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import { Card } from "@/components/ui/Card";
 
-const recommendedItems = Array.from({ length: 12 }, (_, i) => ({
-  id: i + 1,
-  name: "Burger King",
-  rating: 4.9,
-  location: "Jakarta Selatan",
-  distance: "2.4 km",
-  image: "/Burger.svg",
-}));
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { fetchResto } from "@/lib/redux/features/restoSlice";
 
 const features = [
   { id: 1, title: "All Restaurant", image: "/AllFood.svg" },
@@ -26,6 +22,15 @@ const features = [
 ];
 
 export default function HomePage() {
+  const dispatch = useAppDispatch();
+  const { restaurants, loading, error } = useAppSelector(
+    (state) => state.resto
+  );
+
+  useEffect(() => {
+    dispatch(fetchResto());
+  }, [dispatch]);
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
@@ -54,6 +59,7 @@ export default function HomePage() {
                       />
                     </div>
                   </Card>
+
                   <h3 className="text-xs lg:text-lg font-bold text-gray-900">
                     {feature.title}
                   </h3>
@@ -75,51 +81,63 @@ export default function HomePage() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {recommendedItems.map((item) => (
-                <Link key={item.id} href="/detail">
-                  <Card
-                    variant="default"
-                    hover
-                    className="p-4 transition-shadow hover:shadow-lg cursor-pointer"
-                  >
-                    <div className="flex gap-4">
-                      <div className="bg-orange-100 rounded-2xl p-3 w-16 h-16 flex items-center justify-center">
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          width={48}
-                          height={48}
-                          className="object-contain"
-                        />
-                      </div>
+            {loading && (
+              <div className="text-center py-10">Loading...</div>
+            )}
 
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-gray-900">
-                          {item.name}
-                        </h3>
+            {error && (
+              <div className="text-center text-red-500 py-10">
+                {error}
+              </div>
+            )}
 
-                        <div className="flex items-center gap-1 text-sm">
-                          <svg
-                            className="w-4 h-4 text-yellow-400 fill-current"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                          </svg>
-                          <span className="font-medium text-gray-700">
-                            {item.rating}
-                          </span>
+            {!loading && !error && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {restaurants.map((item) => (
+                  <Link key={item?.id} href={`/detail?id=${item?.id}`}>
+                    <Card
+                      variant="default"
+                      hover
+                      className="p-4 transition-shadow hover:shadow-lg cursor-pointer"
+                    >
+                      <div className="flex gap-4">
+                        <div className="bg-orange-100 rounded-2xl p-3 w-16 h-16 flex items-center justify-center">
+                          <Image
+                            src={item?.logo ??  "/Burger.svg"}
+                            alt={item?.name}
+                            width={48}
+                            height={48}
+                            className="object-contain"
+                          />
                         </div>
 
-                        <p className="text-xs text-gray-500">
-                          {item.location} · {item.distance}
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-gray-900 truncate">
+                            {item?.name}
+                          </h3>
+
+                          <div className="flex items-center gap-1 text-sm">
+                            <svg
+                              className="w-4 h-4 text-yellow-400 fill-current"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                            </svg>
+                            <span className="font-medium text-gray-700">
+                              {item?.star}
+                            </span>
+                          </div>
+
+                          <p className="text-xs text-gray-500">
+                            {item?.place} · {item?.distance} km
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
-            </div>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            )}
 
             <div className="flex justify-center mt-10">
               <button className="px-8 py-3 border rounded-full text-gray-700 hover:bg-gray-100 transition">
