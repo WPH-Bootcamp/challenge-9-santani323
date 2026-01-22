@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { loginUser } from "@/lib/redux/features/authSlice";
+import { useAppDispatch } from "@/lib/redux/hooks";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -48,6 +50,7 @@ const validateField = (
 
 export default function LoginPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -70,7 +73,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validate all fields
@@ -82,9 +85,11 @@ export default function LoginPage() {
 
     // If no errors, proceed with login
     if (!emailErr && !passwordErr) {
-      console.log("Login:", { email, password });
-      // Redirect to home page
-      router.push("/");
+      const resultAction = await dispatch(loginUser({ email, password }));
+      // @ts-ignore
+      if (loginUser.fulfilled.match(resultAction)) {
+        router.push("/");
+      }
     }
   };
 
