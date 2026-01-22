@@ -97,7 +97,7 @@ export default function HomePage() {
                       className="p-4 transition-shadow hover:shadow-lg cursor-pointer"
                     >
                       <div className="flex gap-4">
-                        <div className="bg-orange-100 rounded-2xl p-3 w-16 h-16 flex items-center justify-center">
+                        
                           <Image
                             src={
                               item?.logo && item.logo.startsWith("http")
@@ -109,7 +109,7 @@ export default function HomePage() {
                             height={48}
                             className="object-contain"
                           />
-                        </div>
+                         
 
                         <div className="flex-1 min-w-0">
                           <h3 className="font-bold text-gray-900 truncate">
