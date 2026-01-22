@@ -24,7 +24,7 @@ const features = [
 export default function HomePage() {
   const dispatch = useAppDispatch();
   const { restaurants, loading, error } = useAppSelector(
-    (state) => state.resto
+    (state) => state.resto,
   );
 
   useEffect(() => {
@@ -81,14 +81,10 @@ export default function HomePage() {
               </button>
             </div>
 
-            {loading && (
-              <div className="text-center py-10">Loading...</div>
-            )}
+            {loading && <div className="text-center py-10">Loading...</div>}
 
             {error && (
-              <div className="text-center text-red-500 py-10">
-                {error}
-              </div>
+              <div className="text-center text-red-500 py-10">{error}</div>
             )}
 
             {!loading && !error && (
@@ -103,7 +99,11 @@ export default function HomePage() {
                       <div className="flex gap-4">
                         <div className="bg-orange-100 rounded-2xl p-3 w-16 h-16 flex items-center justify-center">
                           <Image
-                            src={item?.logo ??  "/Burger.svg"}
+                            src={
+                              item?.logo && item.logo.startsWith("http")
+                                ? item.logo
+                                : "/Burger.svg"
+                            }
                             alt={item?.name}
                             width={48}
                             height={48}
