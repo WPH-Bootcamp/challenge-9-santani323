@@ -36,7 +36,6 @@ const initialState: AuthState = {
   isRegistered: false,
 };
 
-
 // Async thunk for registration
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -69,7 +68,10 @@ export const registerUser = createAsyncThunk(
 // Async thunk for login
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (loginData: { email: string; password: string }, { rejectWithValue }) => {
+  async (
+    loginData: { email: string; password: string },
+    { rejectWithValue },
+  ) => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/login`,
@@ -147,12 +149,15 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.error = null;
-        state.user = action.payload.user || null;
+        state.user = action?.payload?.user?.name || null;
         state.token = action.payload.token || null;
         // Simpan token ke localStorage agar tetap login
         if (action.payload.token) {
           if (typeof window !== "undefined") {
+            console.log("responlogin", action?.payload?.user?.name);
+
             localStorage.setItem("token", action.payload.token);
+            localStorage.setItem("user", action?.payload?.user?.name);
           }
         }
       })
