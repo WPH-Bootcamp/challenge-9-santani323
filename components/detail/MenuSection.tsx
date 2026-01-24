@@ -1,8 +1,19 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+
 import { Button } from "@/components/ui/Button";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import {
+  addToCart,
+  fetchCart,
+} from "@/lib/redux/features/cartSlice";
+
+/* =========================
+   TYPES
+========================= */
 
 interface MenuItem {
   id: number;
@@ -16,51 +27,95 @@ interface MenuSectionProps {
   menuItems: MenuItem[];
 }
 
+/* =========================
+   COMPONENT
+========================= */
+
 export default function MenuSection({ menuItems }: MenuSectionProps) {
-  const [selectedCategory, setSelectedCategory] = useState<"all" | "food" | "drink">("all");
+  const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
+
+  // Ambil restaurantId dari URL (?id=298)
+  const restaurantId = Number(searchParams.get("id"));
+
+  const [selectedCategory, setSelectedCategory] = useState<
+    "all" | "food" | "drink"
+  >("all");
+
   const [quantities, setQuantities] = useState<Record<number, number>>({});
+
+  /* =========================
+     FILTER MENU
+  ========================= */
 
   const filteredItems =
     selectedCategory === "all"
       ? menuItems
-      : menuItems.filter(item => item.category === selectedCategory);
+      : menuItems.filter((item) => item.category === selectedCategory);
 
-  const handleAdd = (id: number) => {
-    setQuantities(prev => ({ ...prev, [id]: 1 }));
+  /* =========================
+     QUANTITY HANDLER
+  ========================= */
+
+  const handleAdd = (menuId: number) => {
+    setQuantities((prev) => ({ ...prev, [menuId]: 1 }));
   };
 
-  const handleIncrease = (id: number) => {
-    setQuantities(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  const handleIncrease = (menuId: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [menuId]: (prev[menuId] || 1) + 1,
+    }));
   };
 
-  const handleDecrease = (id: number) => {
-    setQuantities(prev => {
-      const newQty = (prev[id] || 0) - 1;
+  const handleDecrease = (menuId: number) => {
+    setQuantities((prev) => {
+      const newQty = (prev[menuId] || 0) - 1;
+
       if (newQty <= 0) {
-        const { [id]: _, ...rest } = prev;
+        const { [menuId]: _, ...rest } = prev;
         return rest;
       }
-      return { ...prev, [id]: newQty };
+
+      return { ...prev, [menuId]: newQty };
     });
   };
 
-  const addCart = (item: MenuItem) => {
-    const payload = {
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      quantity: quantities[item.id] || 1,
-    };
-    console.log("Adding to cart:", payload);
+  /* =========================
+     ADD TO CART (FINAL)
+  ========================= */
+
+  const handleAddToCart = async (menuId: number) => {
+    if (!restaurantId) return;
+
+    try {
+      await dispatch(
+        addToCart({
+          restaurantId,
+          menuId,
+          quantity: quantities[menuId] ?? 1,
+        })
+      ).unwrap();
+
+      // ✅ hanya jalan jika addToCart sukses
+      dispatch(fetchCart());
+    } catch (error) {
+      console.error("Add to cart failed:", error);
+      // optional: toast error
+    }
   };
+
+  /* =========================
+     RENDER
+  ========================= */
 
   return (
     <section className="mb-8">
       <h2 className="text-2xl font-bold mb-6">Menu</h2>
 
-      {/* Category Tabs */}
+      {/* CATEGORY FILTER */}
       <div className="flex gap-3 mb-6">
-        {["all", "food", "drink"].map(cat => (
+        {["all", "food", "drink"].map((cat) => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat as any)}
@@ -70,14 +125,16 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
                 : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
             }`}
           >
-            {cat === "all" ? "All Menu" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+            {cat === "all"
+              ? "All Menu"
+              : cat.charAt(0).toUpperCase() + cat.slice(1)}
           </button>
         ))}
       </div>
 
-      {/* Menu Grid */}
+      {/* MENU GRID */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filteredItems.map(item => (
+        {filteredItems.map((item) => (
           <div
             key={item.id}
             className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden"
@@ -111,9 +168,11 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
                       >
                         −
                       </button>
+
                       <span className="font-bold min-w-[20px] text-center">
                         {quantities[item.id]}
                       </span>
+
                       <button
                         onClick={() => handleIncrease(item.id)}
                         className="w-7 h-7 flex items-center justify-center bg-red-600 text-white rounded hover:bg-red-700"
@@ -123,10 +182,13 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
                     </div>
                   ) : (
                     <Button
-                      onClick={() => handleAdd(item.id)}
                       variant="primary"
                       size="sm"
                       className="px-6"
+                      onClick={() => {
+                        handleAdd(item.id);
+                        handleAddToCart(item.id);
+                      }}
                     >
                       Add
                     </Button>
@@ -138,7 +200,7 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
         ))}
       </div>
 
-      {/* Show More */}
+      {/* SHOW MORE */}
       <div className="flex justify-center mt-8">
         <button className="px-8 py-3 border border-gray-300 rounded-full text-gray-700 font-medium hover:bg-gray-50">
           Show More

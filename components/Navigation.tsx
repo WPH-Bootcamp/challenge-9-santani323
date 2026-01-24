@@ -1,15 +1,15 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
+
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { fetchCart } from "@/lib/redux/features/cartSlice";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import {
-  FiUser,
-  FiMapPin,
-  FiFileText,
-  FiLogOut,
-} from "react-icons/fi";
+import { FiUser, FiMapPin, FiFileText, FiLogOut } from "react-icons/fi";
 
 /* =========================
    NAVIGATION
@@ -20,10 +20,22 @@ export default function Navigation({
 }: {
   scrolled?: boolean;
 }) {
+  const dispatch = useAppDispatch();
   const [isScrolled, setIsScrolled] = useState(scrolled);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
-  const [cartQty, setCartQty] = useState<number>(10);
+  const [cartQty, setCartQty] = useState<number>(0);
+  const { items, loading, loadingAdd } = useAppSelector((state) => state.cart);
+
+  useEffect(() => {
+    dispatch(fetchCart());
+  }, [dispatch, loadingAdd]);
+
+  useEffect(() => {
+    console.log("loading cart:", items, loading, loadingAdd);
+
+    setCartQty(items?.summary?.totalItems || 0);
+  }, [items, loading, loadingAdd]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -47,7 +59,7 @@ export default function Navigation({
           const cart = JSON.parse(cartStr);
           const totalQty = cart.reduce(
             (sum: number, item: any) => sum + (item.quantity || 1),
-            0
+            0,
           );
           setCartQty(totalQty);
         } catch {

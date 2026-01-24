@@ -2,17 +2,19 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { CartItem, CartApiResponse } from "@/lib/types/cart";
 import { getAuthToken } from "@/lib/utils/auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface CartState {
   items: CartItem[];
   loading: boolean;
+  loadingAdd: boolean;
   error: string | null;
 }
 
 const initialState: CartState = {
   items: [],
   loading: false,
+  loadingAdd: false,
   error: null,
 };
 
@@ -27,7 +29,7 @@ export const fetchCart = createAsyncThunk<
   try {
     const token = getAuthToken();
 
-    const res = await fetch(`${API_URL}/cart`, {
+    const res = await fetch(`${API_URL}cart`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -53,7 +55,7 @@ export const addToCart = createAsyncThunk<
   try {
     const token = getAuthToken();
 
-    const res = await fetch(`${API_URL}/cart`, {
+    const res = await fetch(`${API_URL}cart`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -152,14 +154,23 @@ const cartSlice = createSlice({
       })
 
       // ADD
+      .addCase(addToCart.pending, (state) => {
+        state.loadingAdd = true;
+        state.error = null;
+      })
       .addCase(addToCart.fulfilled, (state, action) => {
         state.items.push(action.payload);
+        state.loadingAdd = false;
+      })
+      .addCase(addToCart.rejected, (state, action) => {
+        state.loadingAdd = false;
+        state.error = action.payload ?? "Unknown error";
       })
 
       // UPDATE
       .addCase(updateCartItem.fulfilled, (state, action) => {
         const index = state.items.findIndex(
-          item => item.id === action.payload.id
+          (item) => item.id === action.payload.id,
         );
         if (index !== -1) {
           state.items[index] = action.payload;
@@ -168,9 +179,7 @@ const cartSlice = createSlice({
 
       // DELETE
       .addCase(removeCartItem.fulfilled, (state, action) => {
-        state.items = state.items.filter(
-          item => item.id !== action.payload
-        );
+        state.items = state.items.filter((item) => item.id !== action.payload);
       });
   },
 });
