@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import {
-  FiShoppingBag,
   FiUser,
   FiMapPin,
   FiFileText,
@@ -24,9 +23,11 @@ export default function Navigation({
   const [isScrolled, setIsScrolled] = useState(scrolled);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
+  const [cartQty, setCartQty] = useState<number>(10);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      // AUTH
       const t = localStorage.getItem("token");
       setToken(t);
 
@@ -36,6 +37,21 @@ export default function Navigation({
           setUser(JSON.parse(userStr));
         } catch {
           setUser(null);
+        }
+      }
+
+      // CART
+      const cartStr = localStorage.getItem("cart");
+      if (cartStr) {
+        try {
+          const cart = JSON.parse(cartStr);
+          const totalQty = cart.reduce(
+            (sum: number, item: any) => sum + (item.quantity || 1),
+            0
+          );
+          setCartQty(totalQty);
+        } catch {
+          setCartQty(0);
         }
       }
     }
@@ -79,19 +95,20 @@ export default function Navigation({
             {token ? (
               <>
                 {/* CART */}
-                <Link href="/cart">
-                  <span
-                    className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-                      isScrolled
-                        ? "bg-black/10 hover:bg-black/20"
-                        : "bg-white/20 hover:bg-white/30"
-                    }`}
-                  >
-                    <FiShoppingBag
-                      size={24}
-                      color={isScrolled ? "black" : "white"}
-                    />
-                  </span>
+                <Link href="/cart" className="relative">
+                  <Image
+                    src={isScrolled ? "/cart_black.svg" : "/cart_white.svg"}
+                    alt="Cart"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6"
+                  />
+
+                  {cartQty > 0 && (
+                    <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
+                      {cartQty}
+                    </span>
+                  )}
                 </Link>
 
                 {/* USER DROPDOWN */}
@@ -214,6 +231,7 @@ function UserDropdown({
             onClick={() => {
               localStorage.removeItem("token");
               localStorage.removeItem("user");
+              localStorage.removeItem("cart");
               window.location.reload();
             }}
           />
