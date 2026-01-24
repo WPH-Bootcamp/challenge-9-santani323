@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Restaurant, RestaurantApiResponse } from "@/lib/types";
 import * as RestaurantAPI from "@/lib/fetchRecommendedRestaurants";
 
@@ -26,13 +26,14 @@ export const fetchResto = createAsyncThunk<
 >("resto/fetchResto", async (_, { rejectWithValue }) => {
   try {
     return await RestaurantAPI.fetchRecommendedRestaurants({});
-  } catch {
+  } catch (error) {
+    console.error(error);
     return rejectWithValue("Failed to fetch restaurant list");
   }
 });
 
 /**
- * Fetch detail restoran (OBJECT)
+ * Fetch detail restoran
  */
 export const fetchRestoDetail = createAsyncThunk<
   RestaurantApiResponse,
@@ -41,7 +42,8 @@ export const fetchRestoDetail = createAsyncThunk<
 >("resto/fetchRestoDetail", async (payload, { rejectWithValue }) => {
   try {
     return await RestaurantAPI.fetchRecommendedRestaurantsDetail(payload);
-  } catch {
+  } catch (error) {
+    console.error(error);
     return rejectWithValue("Failed to fetch restaurant detail");
   }
 });
@@ -63,34 +65,26 @@ const restoSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        fetchResto.fulfilled,
-        (state, action: PayloadAction<RestaurantApiResponse>) => {
-          state.loading = false;
-          state.restaurants = action.payload.data.restaurants ?? [];
-        }
-      )
+      .addCase(fetchResto.fulfilled, (state, action) => {
+        state.loading = false;
+        state.restaurants = action.payload?.data?.restaurants ?? [];
+      })
       .addCase(fetchResto.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Unknown error";
       })
 
       // =====================
-      // FETCH DETAIL (OBJECT)
+      // FETCH DETAIL
       // =====================
       .addCase(fetchRestoDetail.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        fetchRestoDetail.fulfilled,
-        (state, action: PayloadAction<RestaurantApiResponse>) => {
-        
-          
-          state.loading = false;
-          state.restaurantDetail = action.payload.data ?? null;
-        }
-      )
+      .addCase(fetchRestoDetail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.restaurantDetail = action.payload?.data ?? null;
+      })
       .addCase(fetchRestoDetail.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Unknown error";

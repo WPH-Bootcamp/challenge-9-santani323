@@ -7,7 +7,6 @@ interface Review {
   date: string;
   rating: number;
   comment: string;
-  avatar?: string;
 }
 
 interface ReviewSectionProps {
@@ -23,6 +22,7 @@ export default function ReviewSection({
 }: ReviewSectionProps) {
   return (
     <section className="mt-14">
+      {/* Header */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-2">Review</h2>
         <div className="flex items-center gap-2">
@@ -33,18 +33,20 @@ export default function ReviewSection({
         </div>
       </div>
 
+      {/* Review List */}
       <div className="grid md:grid-cols-2 gap-6">
         {reviews.map((review) => (
           <div
             key={review.id}
             className="bg-white rounded-xl border border-gray-200 p-4"
           >
+            {/* User Info */}
             <div className="flex items-start gap-3 mb-3">
               <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-purple-400 to-pink-400">
                 {review.user.avatar ? (
                   <img
                     src={review.user.avatar}
-                    alt={review.user.name}
+                    alt={`Avatar ${review.user.name}`}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -62,17 +64,21 @@ export default function ReviewSection({
               </div>
             </div>
 
+            {/* Rating */}
             <div className="flex gap-1 mb-3">
-              {[...Array(5)].map((_, i) => (
+              {Array.from({ length: 5 }).map((_, i) => (
                 <span
                   key={i}
-                  className={`text-lg ${i < review.star ? "text-yellow-400" : "text-gray-300"}`}
+                  className={`text-lg ${
+                    i < review.rating ? "text-yellow-400" : "text-gray-300"
+                  }`}
                 >
                   ★
                 </span>
               ))}
             </div>
 
+            {/* Comment */}
             <p className="text-sm text-gray-700 leading-relaxed">
               {review.comment}
             </p>
@@ -80,8 +86,12 @@ export default function ReviewSection({
         ))}
       </div>
 
+      {/* Action */}
       <div className="flex justify-center mt-8">
-        <button className="px-8 py-3 border border-gray-300 rounded-full text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+        <button
+          type="button"
+          className="px-8 py-3 border border-gray-300 rounded-full text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+        >
           Show More
         </button>
       </div>
