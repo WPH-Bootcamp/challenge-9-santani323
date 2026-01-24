@@ -1,11 +1,16 @@
 "use client";
 
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import Navigation from "@/components/Navigation";
+
 import Footer from "@/components/Footer";
 import HeroGallery from "@/components/detail/HeroGallery";
 import RestaurantInfo from "@/components/detail/RestaurantInfo";
 import MenuSection from "@/components/detail/MenuSection";
 import ReviewSection from "@/components/detail/ReviewSection";
+import { fetchRestoDetail } from "@/lib/redux/features/restoSlice";
 
 const images = [
   "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80",
@@ -87,78 +92,96 @@ const reviews = [
     name: "Sanrio Avelino",
     date: "2 hari lalu",
     rating: 5,
-    comment: "Burger yang sangat lezat! Dagingnya juicy dan bumbunya pas banget. Pelayanannya juga cepat dan ramah. Recommended!",
-    avatar: "SA"
+    comment:
+      "Burger yang sangat lezat! Dagingnya juicy dan bumbunya pas banget. Pelayanannya juga cepat dan ramah. Recommended!",
+    avatar: "SA",
   },
   {
     id: 2,
     name: "Budi Santoso",
     date: "3 hari lalu",
     rating: 5,
-    comment: "Whopper favorit saya! Selalu fresh dan porsinya besar. Tempatnya juga bersih dan nyaman.",
-    avatar: "BS"
+    comment:
+      "Whopper favorit saya! Selalu fresh dan porsinya besar. Tempatnya juga bersih dan nyaman.",
+    avatar: "BS",
   },
   {
     id: 3,
     name: "Maya Putri",
     date: "5 hari lalu",
     rating: 5,
-    comment: "Menu chicken burgernya enak banget, kentangnya crispy. Harga terjangkau dengan kualitas premium!",
-    avatar: "MP"
+    comment:
+      "Menu chicken burgernya enak banget, kentangnya crispy. Harga terjangkau dengan kualitas premium!",
+    avatar: "MP",
   },
   {
     id: 4,
     name: "Rudi Hermawan",
     date: "1 minggu lalu",
     rating: 5,
-    comment: "Suka banget sama burger king! Rasanya konsisten dan selalu memuaskan. Minumannya juga enak.",
-    avatar: "RH"
+    comment:
+      "Suka banget sama burger king! Rasanya konsisten dan selalu memuaskan. Minumannya juga enak.",
+    avatar: "RH",
   },
   {
     id: 5,
     name: "Siti Nurhaliza",
     date: "1 minggu lalu",
     rating: 5,
-    comment: "Pelayanan sangat memuaskan, makanannya enak, tempatnya bersih. Worth it banget!",
-    avatar: "SN"
+    comment:
+      "Pelayanan sangat memuaskan, makanannya enak, tempatnya bersih. Worth it banget!",
+    avatar: "SN",
   },
   {
     id: 6,
     name: "Ahmad Fauzi",
     date: "2 minggu lalu",
     rating: 5,
-    comment: "Double beef burgernya mantap! Daging tebal dan sausnya creamy. Pasti balik lagi!",
-    avatar: "AF"
+    comment:
+      "Double beef burgernya mantap! Daging tebal dan sausnya creamy. Pasti balik lagi!",
+    avatar: "AF",
   },
 ];
 
 export default function DetailPage() {
+  const dispatch = useAppDispatch();
+  const { restaurantDetail, loading, error } = useAppSelector(
+    (state) => state.resto,
+  );
+  console.log("restaurantDetail", restaurantDetail);
+
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  useEffect(() => {
+    const payload = { id: id ?? "" };
+    dispatch(fetchRestoDetail(payload));
+  }, [dispatch, id]);
   return (
     <div className="min-h-screen bg-white">
       <Navigation scrolled />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 xl:px-24 py-8 mt-16">
         {/* ================= HERO ================= */}
-        <HeroGallery images={images} />
+        <HeroGallery images={restaurantDetail?.images ?? []} />
 
         {/* ================= RESTAURANT INFO ================= */}
         <RestaurantInfo
-          name="Burger King"
-          logo="/Burger.svg"
-          rating={4.9}
-          location="Jakarta Selatan"
+          name={restaurantDetail?.name ?? "Loading..."}
+          logo={restaurantDetail?.logo ?? ""}
+          rating={restaurantDetail?.star ?? 0}
+          location={restaurantDetail?.place ?? " Loading..."}
           distance="2.4 km"
         />
 
         {/* ================= MENU ================= */}
         <section className="mt-10">
-          <MenuSection menuItems={menuItems} />
+          <MenuSection menuItems={restaurantDetail?.menus ?? []} />
         </section>
 
         {/* ================= REVIEWS ================= */}
         <section className="mt-14">
-          <ReviewSection 
-            reviews={reviews}
+          <ReviewSection
+            reviews={restaurantDetail?.reviews ?? []}
             averageRating={4.9}
             totalReviews={24}
           />

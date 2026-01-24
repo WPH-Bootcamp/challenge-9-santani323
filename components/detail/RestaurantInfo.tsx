@@ -20,7 +20,7 @@ export default function RestaurantInfo({
     <section className="bg-white rounded-xl shadow p-6 lg:p-8 mb-8">
       <div className="flex gap-4 items-start justify-between">
         <div className="flex gap-4">
-          <div className="bg-orange-100 w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0">
             <Image src={logo} alt="Logo" width={40} height={40} />
           </div>
           

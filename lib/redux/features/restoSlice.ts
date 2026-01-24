@@ -1,49 +1,102 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Restaurant, RestaurantApiResponse } from "@/lib/types";
-import { fetchRecommendedRestaurants } from "@/lib/fetchRecommendedRestaurants";
+import * as RestaurantAPI from "@/lib/fetchRecommendedRestaurants";
 
 export interface RestoState {
   restaurants: Restaurant[];
+  restaurantDetail: Restaurant | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: RestoState = {
   restaurants: [],
+  restaurantDetail: null,
   loading: false,
   error: null,
 };
 
-export const fetchResto = createAsyncThunk<RestaurantApiResponse>(
-  "resto/fetchResto",
-  async (_, { rejectWithValue }) => {
-    try {
-      return await fetchRecommendedRestaurants({});
-    } catch (err: any) {
-      return rejectWithValue(err.message || "Failed to fetch data");
-    }
+/**
+ * Fetch list restoran
+ */
+export const fetchResto = createAsyncThunk<
+  RestaurantApiResponse,
+  void,
+  { rejectValue: string }
+>("resto/fetchResto", async (_, { rejectWithValue }) => {
+  try {
+    return await RestaurantAPI.fetchRecommendedRestaurants({});
+  } catch {
+    return rejectWithValue("Failed to fetch restaurant list");
   }
-);
+});
+
+/**
+ * Fetch detail restoran (OBJECT)
+ */
+export const fetchRestoDetail = createAsyncThunk<
+  RestaurantApiResponse,
+  { id: string; limitMenu?: number; limitReview?: number },
+  { rejectValue: string }
+>("resto/fetchRestoDetail", async (payload, { rejectWithValue }) => {
+  try {
+    return await RestaurantAPI.fetchRecommendedRestaurantsDetail(payload);
+  } catch {
+    return rejectWithValue("Failed to fetch restaurant detail");
+  }
+});
 
 const restoSlice = createSlice({
   name: "resto",
   initialState,
-  reducers: {},
+  reducers: {
+    clearRestaurantDetail(state) {
+      state.restaurantDetail = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
+      // =====================
+      // FETCH LIST
+      // =====================
       .addCase(fetchResto.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchResto.fulfilled, (state, action: PayloadAction<RestaurantApiResponse>) => {
-        state.loading = false;
-        state.restaurants = action.payload.data.restaurants;
-      })
+      .addCase(
+        fetchResto.fulfilled,
+        (state, action: PayloadAction<RestaurantApiResponse>) => {
+          state.loading = false;
+          state.restaurants = action.payload.data.restaurants ?? [];
+        }
+      )
       .addCase(fetchResto.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload ?? "Unknown error";
+      })
+
+      // =====================
+      // FETCH DETAIL (OBJECT)
+      // =====================
+      .addCase(fetchRestoDetail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchRestoDetail.fulfilled,
+        (state, action: PayloadAction<RestaurantApiResponse>) => {
+        
+          
+          state.loading = false;
+          state.restaurantDetail = action.payload.data ?? null;
+        }
+      )
+      .addCase(fetchRestoDetail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Unknown error";
       });
   },
 });
 
+export const { clearRestaurantDetail } = restoSlice.actions;
 export default restoSlice.reducer;
