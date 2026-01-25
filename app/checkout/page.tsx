@@ -65,10 +65,10 @@ export default function DetailPage() {
             <div className="bg-white rounded-xl shadow-md p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                 <img
-                      src={checkoutItem?.restaurant?.logo}
-                      className="h-16 w-16 rounded-lg object-cover"
-                    />
+                  <img
+                    src={checkoutItem?.restaurant?.logo}
+                    className="h-16 w-16 rounded-lg object-cover"
+                  />
                   <h3 className="font-semibold">
                     {checkoutItem?.restaurant?.name}
                   </h3>
@@ -147,8 +147,8 @@ export default function DetailPage() {
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span>Price (2 items)</span>
-                  <span>Rp100.000</span>
+                  <span>Price ({checkoutItem?.items?.length} items)</span>
+                  <span>{checkoutItem?.subtotal}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Fee</span>
