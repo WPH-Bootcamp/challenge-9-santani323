@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
@@ -8,6 +8,7 @@ import { fetchRestoDetail } from "@/lib/redux/features/restoSlice";
 
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { formatRupiah } from "@/lib/utils/formatRupiah";
 
 export default function DetailPage() {
   const dispatch = useAppDispatch();
@@ -18,6 +19,7 @@ export default function DetailPage() {
     (state) => state.resto,
   );
   const { checkoutItem } = useAppSelector((state) => state.cart);
+  const [selectedRadio, setSelectedRadio] = useState([]);
 
   useEffect(() => {
     if (!id) return;
@@ -27,6 +29,7 @@ export default function DetailPage() {
 
   useEffect(() => {
     console.log("checkoutItem from cartSlice:", checkoutItem);
+    setSelectedRadio(checkoutItem?.items || []);
   }, [checkoutItem, id]);
 
   return (
@@ -62,10 +65,13 @@ export default function DetailPage() {
             <div className="bg-white rounded-xl shadow-md p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-xl">
-                    🍔
-                  </div>
-                  <h3 className="font-semibold">Burger Bang</h3>
+                 <img
+                      src={checkoutItem?.restaurant?.logo}
+                      className="h-16 w-16 rounded-lg object-cover"
+                    />
+                  <h3 className="font-semibold">
+                    {checkoutItem?.restaurant?.name}
+                  </h3>
                 </div>
 
                 <button className="rounded-full px-4 py-1 text-sm bg-gray-100 hover:bg-gray-200">
@@ -73,16 +79,21 @@ export default function DetailPage() {
                 </button>
               </div>
 
-              {[1, 2].map((_, i) => (
+              {selectedRadio?.map((item, i) => (
                 <div
                   key={i}
                   className="flex items-center justify-between py-4 border-t border-gray-200 first:border-t-0"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-lg bg-gray-100" />
+                    <img
+                      src={item.menu.image}
+                      className="h-16 w-16 rounded-lg object-cover"
+                    />
                     <div>
-                      <p className="font-medium">Food Name</p>
-                      <p className="text-sm text-gray-500">Rp50.000</p>
+                      <p className="font-medium">{item.menu.foodName}</p>
+                      <p className="text-sm text-gray-500">
+                        {formatRupiah(item.menu.price)}
+                      </p>
                     </div>
                   </div>
 
@@ -90,7 +101,7 @@ export default function DetailPage() {
                     <button className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-lg">
                       −
                     </button>
-                    <span className="w-6 text-center">1</span>
+                    <span className="w-6 text-center">{item.quantity}</span>
                     <button className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center text-lg">
                       +
                     </button>
