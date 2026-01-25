@@ -31,8 +31,7 @@ export default function Navigation({
     dispatch(fetchCart());
   }, [dispatch, loadingAdd]);
 
-  useEffect(() => {
-    console.log("loading cart:", items, loading, loadingAdd);
+  useEffect(() => { 
 
     setCartQty(items?.summary?.totalItems || 0);
   }, [items, loading, loadingAdd]);

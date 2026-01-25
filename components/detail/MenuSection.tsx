@@ -61,22 +61,30 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
     setQuantities((prev) => ({ ...prev, [menuId]: 1 }));
   };
 
-  const handleIncrease = (menuId: number) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [menuId]: (prev[menuId] || 1) + 1,
-    }));
+  // Perubahan: handleIncrease & handleDecrease langsung update cart
+  const handleIncrease = async (menuId: number) => {
+    setQuantities((prev) => {
+      const newQty = (prev[menuId] || 1) + 1;
+      // Update cart setelah state berubah
+      setTimeout(() => handleAddToCart(menuId, newQty), 0);
+      return {
+        ...prev,
+        [menuId]: newQty,
+      };
+    });
   };
 
-  const handleDecrease = (menuId: number) => {
+  const handleDecrease = async (menuId: number) => {
     setQuantities((prev) => {
       const newQty = (prev[menuId] || 0) - 1;
-
       if (newQty <= 0) {
+        // Hapus dari cart jika qty <= 0
+        setTimeout(() => handleAddToCart(menuId, 0), 0);
         const { [menuId]: _, ...rest } = prev;
         return rest;
       }
-
+      // Update cart setelah state berubah
+      setTimeout(() => handleAddToCart(menuId, newQty), 0);
       return { ...prev, [menuId]: newQty };
     });
   };
@@ -85,7 +93,8 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
      ADD TO CART (FINAL)
   ========================= */
 
-  const handleAddToCart = async (menuId: number) => {
+  // Perubahan: menerima quantity sebagai argumen opsional
+  const handleAddToCart = async (menuId: number, quantity?: number) => {
     if (!restaurantId) return;
 
     try {
@@ -93,7 +102,7 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
         addToCart({
           restaurantId,
           menuId,
-          quantity: quantities[menuId] ?? 1,
+          quantity: quantity ?? quantities[menuId] ?? 1,
         })
       ).unwrap();
 
@@ -163,7 +172,7 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
                   {quantities[item.id] ? (
                     <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
                       <button
-                        onClick={() => handleDecrease(item.id)}
+                        onClick={() => { handleDecrease(item.id);handleAddToCart(item.id, quantities[item.id] - 1); }}
                         className="w-7 h-7 flex items-center justify-center bg-white rounded hover:bg-gray-200"
                       >
                         −
@@ -174,7 +183,7 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
                       </span>
 
                       <button
-                        onClick={() => handleIncrease(item.id)}
+                        onClick={() => { handleIncrease(item.id);handleAddToCart(item.id, 1); }}
                         className="w-7 h-7 flex items-center justify-center bg-red-600 text-white rounded hover:bg-red-700"
                       >
                         +
@@ -187,7 +196,7 @@ export default function MenuSection({ menuItems }: MenuSectionProps) {
                       className="px-6"
                       onClick={() => {
                         handleAdd(item.id);
-                        handleAddToCart(item.id);
+                        handleAddToCart(item.id, 1);
                       }}
                     >
                       Add
