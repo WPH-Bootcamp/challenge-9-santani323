@@ -9,6 +9,8 @@ import { fetchRestoDetail } from "@/lib/redux/features/restoSlice";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { formatRupiah } from "@/lib/utils/formatRupiah";
+import * as order from "@/lib/redux/features/orderSlice";
+import { useRouter } from "next/navigation";
 
 interface CheckoutItem {
   menu: {
@@ -20,6 +22,7 @@ interface CheckoutItem {
 }
 
 export default function DetailPage() {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
@@ -63,7 +66,8 @@ export default function DetailPage() {
       paymentMethod: "BNI Bank Negara Indonesia",
       notes: "Please ring the doorbell",
     };
-    console.log("Checkout Payload:", payload);
+    dispatch(order.checkout(payload)); 
+    router.push("/invoice");
   };
 
   return (

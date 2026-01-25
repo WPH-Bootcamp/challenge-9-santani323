@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { getAuthToken, UserProfileResponse } from "@/lib/utils/auth";
 
 // Types
 export interface RegisterData {
@@ -101,6 +102,43 @@ export const loginUser = createAsyncThunk(
   },
 );
 
+// Async thunk for login
+export const profile = createAsyncThunk(
+  "auth/login",
+  async (
+    loginData: { email: string; password: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const token = getAuthToken();
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/login`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        return rejectWithValue(result.message || "Login failed");
+      }
+
+      // Return only needed data
+      return {
+        user: result.data.user,
+        token: result.data.token,
+      };
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Something went wrong");
+    }
+  },
+);
+
 // Auth slice
 const authSlice = createSlice({
   name: "auth",
@@ -162,6 +200,20 @@ const authSlice = createSlice({
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Profile
+      .addCase(profile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(profile.fulfilled, (state, action: PayloadAction<any>) => {
+        state.isLoading = false;
+        state.error = null;
+        state.user = action?.payload?.user?.name || null;
+      })
+      .addCase(profile.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });
