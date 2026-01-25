@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
@@ -10,43 +10,57 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { formatRupiah } from "@/lib/utils/formatRupiah";
 
+interface CheckoutItem {
+  menu: {
+    foodName: string;
+    price: number;
+    image: string;
+  };
+  quantity: number;
+}
+
 export default function DetailPage() {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
-  const { restaurantDetail, loading, error } = useAppSelector(
-    (state) => state.resto,
-  );
   const { checkoutItem } = useAppSelector((state) => state.cart);
-  const [selectedRadio, setSelectedRadio] = useState([]);
+  const [items, setItems] = useState<CheckoutItem[]>([]);
+  const [paymentMethod, setPaymentMethod] = useState("BNI");
 
   useEffect(() => {
-    if (!id) return;
-
-    dispatch(fetchRestoDetail({ id }));
+    if (id) dispatch(fetchRestoDetail({ id }));
   }, [dispatch, id]);
 
   useEffect(() => {
-    console.log("checkoutItem from cartSlice:", checkoutItem);
-    setSelectedRadio(checkoutItem?.items || []);
-  }, [checkoutItem, id]);
+    if (checkoutItem?.items) setItems(checkoutItem.items);
+  }, [checkoutItem]);
+
+  const deliveryFee = 10_000;
+  const serviceFee = 1_000;
+
+  const subtotal = useMemo(
+    () =>
+      items.reduce((total, item) => total + item.menu.price * item.quantity, 0),
+    [items],
+  );
+
+  const total = subtotal + deliveryFee + serviceFee;
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation selalu solid di halaman detail */}
+    <div className="min-h-screen bg-gray-50">
       <Navigation scrolled />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 xl:px-24 py-8 mt-16">
-        <h1 className="text-2xl font-semibold mb-6">Checkout</h1>
+      <main className="max-w-7xl mx-auto px-6 py-10 mt-16">
+        <h1 className="text-2xl font-semibold mb-8">Checkout</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* LEFT SIDE */}
+          {/* ================= LEFT ================= */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Delivery Address */}
-            <div className="bg-white rounded-xl shadow-md p-5 flex items-start justify-between">
+            {/* Address */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 flex justify-between">
               <div>
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 mb-1">
                   <span className="w-3 h-3 bg-red-500 rounded-full" />
                   <h3 className="font-semibold">Delivery Address</h3>
                 </div>
@@ -55,86 +69,92 @@ export default function DetailPage() {
                 </p>
                 <p className="text-sm text-gray-600">0812-3456-7890</p>
               </div>
-
-              <button className="rounded-full px-4 py-1 text-sm bg-gray-100 hover:bg-gray-200">
+              <button className="h-fit px-4 py-1 rounded-full border text-sm">
                 Change
               </button>
             </div>
 
             {/* Restaurant & Items */}
-            <div className="bg-white rounded-xl shadow-md p-5">
-              <div className="flex items-center justify-between mb-4">
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <img
                     src={checkoutItem?.restaurant?.logo}
-                    className="h-16 w-16 rounded-lg object-cover"
+                    className="w-12 h-12 rounded-lg object-cover"
                   />
                   <h3 className="font-semibold">
                     {checkoutItem?.restaurant?.name}
                   </h3>
                 </div>
-
-                <button className="rounded-full px-4 py-1 text-sm bg-gray-100 hover:bg-gray-200">
+                <button className="px-4 py-1 rounded-full border text-sm">
                   Add item
                 </button>
               </div>
 
-              {selectedRadio?.map((item, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between py-4 border-t border-gray-200 first:border-t-0"
-                >
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={item.menu.image}
-                      className="h-16 w-16 rounded-lg object-cover"
-                    />
-                    <div>
-                      <p className="font-medium">{item.menu.foodName}</p>
-                      <p className="text-sm text-gray-500">
-                        {formatRupiah(item.menu.price)}
-                      </p>
+              <div className="space-y-6">
+                {items.map((item, i) => (
+                  <div key={i} className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={item.menu.image}
+                        className="w-16 h-16 rounded-xl object-cover"
+                      />
+                      <div>
+                        <p className="font-medium">{item.menu.foodName}</p>
+                        <p className="text-sm font-semibold">
+                          {formatRupiah(item.menu.price)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Quantity */}
+                    <div className="flex items-center gap-3">
+                      <button className="w-8 h-8 rounded-full border flex items-center justify-center">
+                        −
+                      </button>
+                      <span>{item.quantity}</span>
+                      <button className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center">
+                        +
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-3">
-                    <button className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-lg">
-                      −
-                    </button>
-                    <span className="w-6 text-center">{item.quantity}</span>
-                    <button className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center text-lg">
-                      +
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* ================= RIGHT ================= */}
           <div className="space-y-6">
             {/* Payment Method */}
-            <div className="bg-white rounded-xl shadow-md p-5">
+            {/* Payment Method */}
+            <div className="bg-white rounded-2xl shadow-sm p-6">
               <h3 className="font-semibold mb-4">Payment Method</h3>
 
               {[
-                "Bank Negara Indonesia",
-                "Bank Rakyat Indonesia",
-                "Bank Central Asia",
-                "Mandiri",
-              ].map((bank, i) => (
+                { id: "BNI", label: "Bank Negara Indonesia" },
+                { id: "BRI", label: "Bank Rakyat Indonesia" },
+                { id: "BCA", label: "Bank Central Asia" },
+                { id: "MANDIRI", label: "Mandiri" },
+              ].map((bank, index, arr) => (
                 <label
-                  key={bank}
-                  className="flex items-center justify-between py-3 border-t border-gray-200 first:border-t-0 cursor-pointer"
+                  key={bank.id}
+                  className={`flex justify-between items-center py-3 cursor-pointer
+        ${
+          index !== arr.length - 1
+            ? "border-b border-dashed border-gray-300"
+            : ""
+        }
+      `}
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gray-100 rounded" />
-                    <span className="text-sm">{bank}</span>
+                    <span className="text-sm">{bank.label}</span>
                   </div>
+
                   <input
                     type="radio"
-                    name="payment"
-                    defaultChecked={i === 0}
+                    checked={paymentMethod === bank.id}
+                    onChange={() => setPaymentMethod(bank.id)}
                     className="accent-red-500"
                   />
                 </label>
@@ -142,30 +162,30 @@ export default function DetailPage() {
             </div>
 
             {/* Payment Summary */}
-            <div className="bg-white rounded-xl shadow-md p-5">
+            <div className="bg-white rounded-2xl shadow-sm p-6">
               <h3 className="font-semibold mb-4">Payment Summary</h3>
 
-              <div className="space-y-2 text-sm">
+              <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span>Price ({checkoutItem?.items?.length} items)</span>
-                  <span>{checkoutItem?.subtotal}</span>
+                  <span>Price ({items.length} items)</span>
+                  <span>{formatRupiah(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Fee</span>
-                  <span>Rp10.000</span>
+                  <span>{formatRupiah(deliveryFee)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Service Fee</span>
-                  <span>Rp1.000</span>
+                  <span>{formatRupiah(serviceFee)}</span>
                 </div>
               </div>
 
-              <div className="flex justify-between font-semibold mt-4 pt-4 border-t border-gray-200">
+              <div className="flex justify-between font-semibold mt-5 pt-5 border-t">
                 <span>Total</span>
-                <span>Rp111.000</span>
+                <span>{formatRupiah(total)}</span>
               </div>
 
-              <button className="w-full mt-5 bg-red-500 hover:bg-red-600 text-white py-3 rounded-full font-semibold shadow-md">
+              <button className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white py-3 rounded-full font-semibold">
                 Buy
               </button>
             </div>
