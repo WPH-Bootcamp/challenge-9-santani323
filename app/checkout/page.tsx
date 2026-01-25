@@ -126,7 +126,6 @@ export default function DetailPage() {
           {/* ================= RIGHT ================= */}
           <div className="space-y-6">
             {/* Payment Method */}
-            {/* Payment Method */}
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <h3 className="font-semibold mb-4">Payment Method</h3>
 
@@ -141,7 +140,7 @@ export default function DetailPage() {
                   className={`flex justify-between items-center py-3 cursor-pointer
         ${
           index !== arr.length - 1
-            ? "border-b border-dashed border-gray-300"
+            ? "border-b border-solid border-gray-300"
             : ""
         }
       `}
