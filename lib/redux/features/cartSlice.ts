@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { CartItem, CartApiResponse } from "@/lib/types/cart";
+import { CartItem, CartApiResponse, CartByRestaurant } from "@/lib/types/cart";
 import { getAuthToken } from "@/lib/utils/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface CartState {
   items: CartItem[];
+  checkoutItem: CartByRestaurant[];
   loading: boolean;
   loadingAdd: boolean;
   error: string | null;
@@ -13,6 +14,7 @@ interface CartState {
 
 const initialState: CartState = {
   items: [],
+  checkoutItem: [],
   loading: false,
   loadingAdd: false,
   error: null,
@@ -136,6 +138,12 @@ const cartSlice = createSlice({
     clearCart(state) {
       state.items = [];
     },
+
+    checkoutCart(state, action) {
+      console.log("checkoutCart action payload:", action.payload);
+      // Here you can implement the checkout logic, e.g., clear the cart or mark items as purchased
+      state.checkoutItem = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -184,5 +192,5 @@ const cartSlice = createSlice({
   },
 });
 
-export const { clearCart } = cartSlice.actions;
+export const { clearCart, checkoutCart } = cartSlice.actions;
 export default cartSlice.reducer;

@@ -17,12 +17,17 @@ export default function DetailPage() {
   const { restaurantDetail, loading, error } = useAppSelector(
     (state) => state.resto,
   );
+  const { checkoutItem } = useAppSelector((state) => state.cart);
 
   useEffect(() => {
     if (!id) return;
 
     dispatch(fetchRestoDetail({ id }));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    console.log("checkoutItem from cartSlice:", checkoutItem);
+  }, [checkoutItem, id]);
 
   return (
     <div className="min-h-screen bg-white">
