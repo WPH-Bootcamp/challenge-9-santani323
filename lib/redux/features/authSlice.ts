@@ -103,16 +103,19 @@ export const loginUser = createAsyncThunk(
 );
 
 // Async thunk for login
-export const profile = createAsyncThunk(
-  "auth/login",
-  async (
-    loginData: { email: string; password: string },
-    { rejectWithValue },
-  ) => {
+export const fetchProfile = createAsyncThunk(
+  "auth/fetchProfile",
+  async (_, { rejectWithValue }) => {
+    // Tidak perlu email/password untuk fetch profile
     try {
       const token = getAuthToken();
+
+      if (!token) {
+        return rejectWithValue("No authentication token found");
+      }
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/login`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/profile`,
         {
           method: "GET",
           headers: {
@@ -122,19 +125,26 @@ export const profile = createAsyncThunk(
         },
       );
 
+      // Cek jika response bukan JSON (misal error 500/HTML)
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        return rejectWithValue("Server error: Invalid response format");
+      }
+
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        return rejectWithValue(result.message || "Login failed");
+        return rejectWithValue(result.message || "Failed to fetch profile");
       }
 
-      // Return only needed data
+      // Biasanya fetch profile hanya mengembalikan data user
+      // Token jarang dikembalikan lagi saat GET Profile karena sudah ada di client
       return {
         user: result.data.user,
-        token: result.data.token,
+        // token: result.data.token, // Tambahkan jika API Anda memang menyegarkan token
       };
     } catch (error: any) {
-      return rejectWithValue(error.message || "Something went wrong");
+      return rejectWithValue(error.message || "Network error occurred");
     }
   },
 );
@@ -203,17 +213,17 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       })
-      // Profile
-      .addCase(profile.pending, (state) => {
+      // fetchProfile
+      .addCase(fetchProfile.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(profile.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(fetchProfile.fulfilled, (state, action: PayloadAction<any>) => {
         state.isLoading = false;
         state.error = null;
-        state.user = action?.payload?.user?.name || null;
+        state.user = action?.payload?.user || null;
       })
-      .addCase(profile.rejected, (state, action) => {
+      .addCase(fetchProfile.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });
